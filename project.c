@@ -1,16 +1,56 @@
+/*
 #include <stdio.h>
-void add_student();
-void update_student();
-void delete_student();
-void add_course();
-void update_course();
-void delete_course();
-void display_course();
-void enroll_student();
-void withdraw_student();
-void display_enrollments();
-void add_transaction();
-void display_transaction();
+#include <stdlib.h>
+#include <string.h>
+typedef struct
+{
+    int studentID;
+    char name[50];
+    char address[100];
+    char phoneNumber[15];
+    char email[50];
+    char dob[15];
+} Student;
+
+typedef struct
+{
+    int courseID;
+    char name[50];
+    char instructor[50];
+    char schedule[50];
+    int credits;
+} Course;
+
+typedef struct
+{
+    int enrollmentID;
+    int studentID;
+    int courseID;
+    char enrollmentDate[20];
+} Enrollment;
+
+typedef struct
+{
+    int transactionID;
+    int studentID;
+    char transactionType[20];
+    float transactionAmount;
+    char transactionDate[20];
+} Transaction;
+
+void add_student(Student students[], int *numStudents);
+void update_student(Student students[], int numStudents);
+void delete_student(Student students[], int *numStudents);
+void display_student(Student students[], int numStudents);
+void add_course(Course courses[], int *numCourses);
+void update_course(Course courses[], int numCourses);
+void delete_course(Course courses[], int *numCourses);
+void display_course(Course courses[], int numCourses);
+void enroll_student(Enrollment enrollments[], int *numEnrollments);
+void withdraw_student(Enrollment enrollments[], int *numEnrollments);
+void display_enrollments(Enrollment enrollments[], int numEnrollments);
+void add_transaction(Transaction transactions[], int *numTransactions);
+void display_transaction(Transaction transactions[], int numTransactions);
 // MAIN FUNCTION
 int main()
 {
@@ -20,7 +60,15 @@ int main()
 
     printf("Enter choice: ");
     scanf("%d", &choice);
-    char student_id[100], name[100], address[100], phone_number[100], email[100], date_of_birth[100];
+    Student students[100];          // Assuming maximum 100 students
+    Course courses[50];             // Assuming maximum 50 courses
+    Enrollment enrollments[500];    // Assuming maximum 500 enrollments
+    Transaction transactions[1000]; // Assuming maximum 1000 transactions
+
+    int numStudents = 0;
+    int numCourses = 0;
+    int numEnrollments = 0;
+    int numTransactions = 0;
 
     switch (choice)
     {
@@ -31,30 +79,15 @@ int main()
         switch (key)
         {
         case 1:
-            // add_student();
-            // char student_id[100], name[100], address[100], phone_number[100], email[100], date_of_birth[100];
-            printf("Enter your student id:");
-            scanf("%s", student_id);
-            printf("Enter your name:");
-            scanf("%s", name);
-            printf("Enter your address:");
-            scanf("%s", address);
-            printf("Enter your phone number:");
-            scanf("%s", phone_number);
-            printf("Enter your email:");
-            scanf("%s", email);
-            printf("Enter your date of birth:");
-            scanf("%s", date_of_birth);
-            printf("Student details added successfully");
+            add_student(students, &numStudents);
 
             break;
         case 2:
-            update_student();
-        // case 3:
-        //     delete_student();
+            update_student(students, numStudents);
+        case 3:
+            delete_student(students, &numStudents);
         case 4:
-            printf("__student_id__|__name__|__address__|__phone_number__|__email__|__date_of_birth__\n");
-            printf("%s|%s|%s|%s|%s|%s\n", student_id, name, address, phone_number, email, date_of_birth);
+            display_student(students, numStudents);
         }
         break;
     case 2:
@@ -66,16 +99,16 @@ int main()
             switch (b)
             {
             case 1:
-                add_course();
+                add_course(courses, &numCourses);
                 break;
             case 2:
-                update_course();
+                update_course(courses, numCourses);
                 break;
             case 3:
-                delete_course();
+                delete_course(courses, &numCourses);
                 break;
             case 4:
-                display_course();
+                display_course(courses, numCourses);
             }
         }
         break;
@@ -87,13 +120,13 @@ int main()
         switch (e)
         {
         case 1:
-            enroll_student();
+            enroll_student(enrollments, &numEnrollments);
             break;
         case 2:
-            withdraw_student();
+            withdraw_student(enrollments, &numEnrollments);
             break;
         case 3:
-            display_enrollments();
+            display_enrollments(enrollments, numEnrollments);
         }
         break;
     case 4:
@@ -104,10 +137,10 @@ int main()
         switch (f)
         {
         case 1:
-            add_transaction();
+            add_transaction(transactions, &numTransactions);
             break;
         case 2:
-            display_transaction();
+            display_transaction(transactions, numTransactions);
             break;
         }
         break;
@@ -116,129 +149,317 @@ int main()
         break;
     }
 }
-/*
-void add_student()
+
+void add_student(Student students[], int *numStudents)
 {
 
-    char student_id[100], name[100], address[100], phone_number[100], email[100], date_of_birth[100];
+    Student newStudent;
     printf("Enter your student id:");
-    scanf("%s", student_id);
+    scanf("%s", newStudent.studentID);
     printf("Enter your name:");
-    scanf("%s", name);
+    scanf("%s", newStudent.name);
     printf("Enter your address:");
-    scanf("%s", address);
+    scanf("%s", newStudent.address);
     printf("Enter your phone number:");
-    scanf("%s", phone_number);
+    scanf("%s", newStudent.phoneNumber);
     printf("Enter your email:");
-    scanf("%s", email);
+    scanf("%s", newStudent.email);
     printf("Enter your date of birth:");
-    scanf("%s", date_of_birth);
+    scanf("%s", newStudent.dob);
+    students[*numStudents] = newStudent;
+
+    (*numStudents)++;
+
     printf("Student details added successfully");
 }
-*/
-void update_student()
-{
 
-    char student_id[100], name[100], address[100], phone_number[100], email[100], date_of_birth[100];
-    printf("enter your student id:");
-    scanf("%s", student_id);
-    if (student_id == "123456789")
+void update_student(Student students[], int numStudents)
+{
+    int studentIDToUpdate;
+    int found = 0;
+
+    printf("Enter the Student ID to update: ");
+    scanf("%d", &studentIDToUpdate);
+    for (int i = 0; i < numStudents; i++)
     {
-        printf("update your student id:");
-        scanf("%s", student_id);
-        printf("update your name:");
-        scanf("%s", name);
-        printf("update your address:");
-        scanf("%s", address);
-        printf("update your phone number:");
-        scanf("%s", phone_number);
-        printf("update your email:");
-        scanf("%s", email);
-        printf("update your date of birth:");
-        scanf("%s", date_of_birth);
+        if (students[i].studentID == studentIDToUpdate)
+        {
+            found = 1;
+
+            printf("update your name:");
+            scanf("%s", students[i].name);
+            printf("update your address:");
+            scanf("%s", students[i].address);
+            printf("update your phone number:");
+            scanf("%s", students[i].phoneNumber);
+            printf("update your email:");
+            scanf("%s", students[i].email);
+            printf("update your date of birth:");
+            scanf("%s", students[i].dob);
+            break;
+        }
     }
-    else
-        printf("student id not found");
+    if (!found)
+    {
+        printf("Student not found\n");
+    }
 }
-void delete_student()
+void delete_student(Student students[], int *numStudents)
+
 {
+    int studentIDToDelete;
+    int found = 0;
+
+    printf("Enter the Student ID to delete: ");
+    scanf("%d", &studentIDToDelete);
+
+    // Search for the student by ID
+    for (int i = 0; i < *numStudents; i++)
+    {
+        if (students[i].studentID == studentIDToDelete)
+        {
+            // Shift elements to remove the student
+            for (int j = i; j < *numStudents - 1; j++)
+            {
+                students[j] = students[j + 1];
+            }
+            found = 1;
+            (*numStudents)--;
+            printf("Student with ID %d deleted successfully.\n", studentIDToDelete);
+            break;
+        }
+    }
+
+    if (!found)
+    {
+        printf("Student with ID %d not found.\n", studentIDToDelete);
+    }
+}
+void display_student(Student students[], int numStudents)
+{
+    if (numStudents == 0)
+    {
+        printf("No students to display.\n");
+        return;
+    }
+
+    printf("Student ID\tName\t\tAddress\t\t\tPhone Number\t\tEmail\t\t\tDate of Birth\n");
+    printf("-------------------------------------------------------------------------------------------------------------------\n");
+    for (int i = 0; i < numStudents; i++)
+    {
+        printf("%d\t\t%s\t\t%s\t\t%s\t\t%s\t\t%s\n",
+               students[i].studentID, students[i].name, students[i].address,
+               students[i].phoneNumber, students[i].email, students[i].dob);
+    }
 }
 
-void add_course()
+void add_course(Course courses[], int *numCourses)
 {
-    char course_id[100], course_name[100], instructor[100], schedule[100], credits[100];
+    Course newCourse;
     printf("Enter your course id:");
-    scanf("%s", course_id);
+    scanf("%s", newCourse.courseID);
     printf("Enter course name:");
-    scanf("%s", course_name);
+    scanf("%s", newCourse.name);
     printf("Enter instructor:");
-    scanf("%s", instructor);
+    scanf("%s", newCourse.instructor);
     printf("Enter schedule:");
-    scanf("%s", schedule);
+    scanf("%s", newCourse.schedule);
     printf("Enter credits:");
-    scanf("%s", credits);
+    scanf("%s", newCourse.credits);
+    courses[*numCourses] = newCourse;
+
+    (*numCourses)++;
+
+    printf("Course added successfully.\n");
 }
-void update_course()
+void update_course(Course courses[], int numCourses)
 {
-    char course_id[100], course_name[100], instructor[100], schedule[100], credits[100];
-    printf("update course id:");
-    scanf("%s", course_id);
-    printf("update course name:");
-    scanf("%s", course_name);
-    printf("update instructor:");
-    scanf("%s", instructor);
-    printf("update schedule:");
-    scanf("%s", schedule);
-    printf("update credits:");
-    scanf("%s", credits);
+    int courseIDToUpdate;
+    int found = 0;
+
+    printf("Enter the Course ID to update: ");
+    scanf("%d", &courseIDToUpdate);
+
+    // Search for the course by ID
+    for (int i = 0; i < numCourses; i++)
+    {
+        if (courses[i].courseID == courseIDToUpdate)
+        {
+            found = 1;
+
+            printf("update course name:");
+            scanf("%s", courses[i].name);
+            printf("update instructor:");
+            scanf("%s", courses[i].instructor);
+            printf("update schedule:");
+            scanf("%s", courses[i].schedule);
+            printf("update credits:");
+            scanf("%s", courses[i].credits);
+            printf("Course with ID %d updated successfully.\n", courseIDToUpdate);
+            break;
+        }
+    }
+
+    if (!found)
+    {
+        printf("Course with ID %d not found.\n", courseIDToUpdate);
+    }
 }
-void delete_course()
+void delete_course(Course courses[], int *numCourses)
 {
+    int courseIDToDelete;
+    int found = 0;
+
+    printf("Enter the Course ID to delete: ");
+    scanf("%d", &courseIDToDelete);
+
+    // Search for the course by ID
+    for (int i = 0; i < *numCourses; i++)
+    {
+        if (courses[i].courseID == courseIDToDelete)
+        {
+            // Shift elements to remove the course
+            for (int j = i; j < *numCourses - 1; j++)
+            {
+                courses[j] = courses[j + 1];
+            }
+            found = 1;
+            (*numCourses)--;
+            printf("Course with ID %d deleted successfully.\n", courseIDToDelete);
+            break;
+        }
+    }
+
+    if (!found)
+    {
+        printf("Course with ID %d not found.\n", courseIDToDelete);
+    }
 }
-void display_course()
+void display_course(Course courses[], int numCourses)
 {
-    char course_id[100], course_name[100], instructor[100], schedule[100], credits[100];
-    printf("__course_id__|__course_name__|__instructor__|__schedule__|__credits__\n");
-    printf("%s|%s|%s|%s|%s\n", course_id, course_name, instructor, schedule, credits);
+    if (numCourses == 0)
+    {
+        printf("No courses to display.\n");
+        return;
+    }
+
+    printf("Course ID\tCourse Name\t\tInstructor\t\tSchedule\t\tCredits\n");
+    printf("-------------------------------------------------------------------------------------------------------------------\n");
+    for (int i = 0; i < numCourses; i++)
+    {
+        printf("%d\t\t%s\t\t\t%s\t\t%s\t\t%d\n",
+               courses[i].courseID, courses[i].name, courses[i].instructor,
+               courses[i].schedule, courses[i].credits);
+    }
 }
-void enroll_student()
+void enroll_student(Enrollment enrollments[], int *numEnrollments)
 {
-    char student_id[100], course_id[100], enrollment_id[100], enrollment_date[100];
+    Enrollment newEnrollment;
     printf("Enter student id:");
-    scanf("%s", student_id);
+    scanf("%s", newEnrollment.studentID);
     printf("Enter course id:");
-    scanf("%s", course_id);
+    scanf("%s", newEnrollment.courseID);
     printf("Enter enrollment id:");
-    scanf("%s", enrollment_id);
+    scanf("%s", newEnrollment.enrollmentID);
     printf("Enter enrollment date:");
-    scanf("%s", enrollment_date);
+    scanf("%s", newEnrollment.enrollmentDate);
+    enrollments[*numEnrollments] = newEnrollment;
+
+    (*numEnrollments)++;
+
+    printf("Student enrolled successfully.\n");
 }
-void withdraw_student()
+void withdraw_student(Enrollment enrollments[], int *numEnrollments)
 {
+    if (*numEnrollments == 0)
+    {
+        printf("No enrollments to withdraw.\n");
+        return;
+    }
+
+    int studentIDToWithdraw;
+    int courseIDToWithdraw;
+    int found = 0;
+
+    printf("Enter the Student ID to withdraw: ");
+    scanf("%d", &studentIDToWithdraw);
+    printf("Enter the Course ID to withdraw: ");
+    scanf("%d", &courseIDToWithdraw);
+
+    // Search for the enrollment to withdraw
+    for (int i = 0; i < *numEnrollments; i++)
+    {
+        if (enrollments[i].studentID == studentIDToWithdraw && enrollments[i].courseID == courseIDToWithdraw)
+        {
+            // Shift elements to remove the enrollment
+            for (int j = i; j < *numEnrollments - 1; j++)
+            {
+                enrollments[j] = enrollments[j + 1];
+            }
+            found = 1;
+            (*numEnrollments)--;
+            printf("Student with ID %d withdrawn from Course ID %d successfully.\n", studentIDToWithdraw, courseIDToWithdraw);
+            break;
+        }
+    }
+
+    if (!found)
+    {
+        printf("Enrollment not found for Student ID %d and Course ID %d.\n", studentIDToWithdraw, courseIDToWithdraw);
+    }
 }
-void display_enrollments()
+void display_enrollments(Enrollment enrollments[], int numEnrollments)
 {
-    char student_id[100], course_id[100], enrollment_id[100], enrollment_date[100];
-    printf("__student_id__|__course_id__|__enrollment_id__|__enrollment_date__\n");
-    printf("%s|%s|%s|%s\n", student_id, course_id, enrollment_id, enrollment_date);
+    if (numEnrollments == 0)
+    {
+        printf("No enrollments to display.\n");
+        return;
+    }
+
+    printf("Enrollment ID\tStudent ID\tCourse ID\tEnrollment Date\n");
+    printf("----------------------------------------------------------------\n");
+    for (int i = 0; i < numEnrollments; i++)
+    {
+        printf("%d\t\t%d\t\t%d\t\t%s\n",
+               enrollments[i].enrollmentID, enrollments[i].studentID, enrollments[i].courseID,
+               enrollments[i].enrollmentDate);
+    }
 }
-void add_transaction()
+void add_transaction(Transaction transactions[], int *numTransactions)
 {
-    char transaction_id[100], student_id[100], transaction_type[100], transaction_date[100], transaction_amount[100];
+    Transaction newTransaction;
     printf("Enter transaction id:");
-    scanf("%s", transaction_id);
+    scanf("%s", newTransaction.transactionID);
     printf("Enter student id:");
-    scanf("%s", student_id);
+    scanf("%s", newTransaction.studentID);
     printf("Enter transaction type:");
-    scanf("%s", transaction_type);
+    scanf("%s", newTransaction.transactionType);
     printf("Enter transaction date:");
-    scanf("%s", transaction_date);
+    scanf("%s", newTransaction.transactionDate);
     printf("Enter transaction amount:");
-    scanf("%s", transaction_amount);
+    scanf("%s", newTransaction.transactionAmount);
+    transactions[*numTransactions] = newTransaction;
+
+    (*numTransactions)++;
+
+    printf("Transaction added successfully.\n");
 }
-void display_transactions()
+void display_transaction(Transaction transactions[], int numTransactions)
+
 {
-    char transaction_id[100], student_id[100], transaction_type[100], transaction_date[100], transaction_amount[100];
-    printf("__transaction_id__|__student_id__|__transaction_type__|__transaction_date__|__transaction_amount__\n");
-    printf("%s|%s|%s|%s|%s\n", transaction_id, student_id, transaction_type, transaction_date, transaction_amount);
+    if (numTransactions == 0)
+    {
+        printf("No transactions to display.\n");
+        return;
+    }
+
+    printf("Transaction ID\tStudent ID\tTransaction Type\tTransaction Amount\tTransaction Date\n");
+    printf("-------------------------------------------------------------------------------------------------------------------\n");
+    for (int i = 0; i < numTransactions; i++)
+    {
+        printf("%d\t\t%d\t\t%s\t\t%.2f\t\t\t%s\n",
+               transactions[i].transactionID, transactions[i].studentID, transactions[i].transactionType,
+               transactions[i].transactionAmount, transactions[i].transactionDate);
+    }
 }
+*/
