@@ -202,24 +202,23 @@ int main()
     return 0;
 }
 */
+/*
 #include <stdio.h>
-void add_student(char add[], int j);
-void input(char a[], int j);
+void add_student(char add[]);
+void input(char a[]);
 int main()
 {
+
 }
-void add_student(char add[], int j)
+void add_student(char add[])
 {
     int k;
     char student_id[100], name[100], address[100], phone_number[100], email[100], date_of_birth[100];
     printf("Enter your student id:");
     input(student_id);
-    for (k = 0; k < j; k++)
-    {
-        printf("%c", student_id[k]);
-    }
+
 }
-void input(char a[], int j)
+void input(char a[])
 {
     int i, j = 0, k;
     char ch;
@@ -236,9 +235,17 @@ void input(char a[], int j)
             a[i] = ch;
         }
     }
-    // for (k = 0; k < j; k++)
-    // {
-    //     printf("%c", a[k]);
-    // }
+     for (k = 0; k < j; k++)
+     {
+        printf("%c", a[k]);
+      }
     return;
+}
+*/
+#include <stdio.h>
+int main()
+{
+    char student_id[100] = "PES2UG23CS1203", name[100] = "RAM", address[100] = "Bangalore", phone_number[100] = "1234567891", email_id[100] = "ram@gmail.com", dob[50] = "12/12/1999";
+    printf("____student id______name_______address_______phone number______email_id_____date of birth_____\n");
+    printf("%s\t  %s\t  %s\t  %s\t  %s\t  %s\t  %s\n", student_id, name, address, phone_number, email_id, dob);
 }
