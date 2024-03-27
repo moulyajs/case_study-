@@ -222,8 +222,6 @@ void deleteStudent()
             break;
         }
     }
-
-    printf("%s\t  %s\t  %s\t  %s\t  %s\t  %s\t  %s\n", student_id, name, address, phone_number, email_id, dob);
 }
 void displayStudents()
 {
@@ -238,7 +236,7 @@ void displayStudents()
             {
 
                 printf("____student id______name_______address_______phone number______email_id_____date of birth_____\n");
-                printf("%s\t  %s\t  %s\t  %s\t  %s\t  %s\t  %s\n", student_id, name, address, phone_number, email_id, dob);
+                printf("%s\t\t%s\t\t%s\t\t%s\t\t%s\t\t%s\n", student_id, name, address, phone_number, email_id, dob);
                 break;
             }
             else
