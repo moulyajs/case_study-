@@ -9,9 +9,9 @@ int main()
 
 void func()
 {
-    char c[25];
+    char c;
     int i;
-    if ((c[i] = getchar()) != '\n')
+    if ((c = getchar()) != '\n')
     {
         printf("%c", c);
         func();
